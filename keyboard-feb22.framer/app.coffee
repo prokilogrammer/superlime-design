@@ -6,7 +6,9 @@ screenHeight = 1130
 codeLayer = new Layer
 	height: screenHeight * 0.7,
 	width: screenWidth,
-	backgroundColor: "blue"
+	backgroundColor: "blue",
+	scrollHorizontal: false
+	
 codeLayer.customData = {text: ''}
 codeLayer.html = ''
 	
@@ -20,7 +22,7 @@ keyboardLayer = new Layer
 
 addToCode = (char) ->
 	codeLayer.customData.text += char
-	codeLayer.html = "<h1 style='padding: 30px'>" + codeLayer.customData.text + "</h1>"
+	codeLayer.html = "<h1 style='padding: 30px; white-space: normal; word-wrap: break-word'>" + codeLayer.customData.text + "</h1>"
 	
 drawKeyboardRow = (startX, startY, buttonsText) ->
 	buttonHeight = 100
@@ -55,6 +57,11 @@ drawKeyboardRow = (startX, startY, buttonsText) ->
 	# Return y position of next row for chaining
 	return startY + buttonHeight + padding
 	
+	
+	
+####################
+#  Keyboard Layout
+####################
 	
 newY = drawKeyboardRow 0, 0, ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p']
 newY = drawKeyboardRow 0, newY, ['', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '']
