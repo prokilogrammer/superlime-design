@@ -4,7 +4,7 @@ screenWidth = 640
 screenHeight = 1130
 
 codeLayer = new Layer
-    height: screenHeight * 0.74,
+    height: screenHeight * 0.67,
     width: screenWidth,
     backgroundColor: "blue",
     scrollHorizontal: false
@@ -15,15 +15,61 @@ codeLayer.html = ''
 keyboardLayer = new Layer
     name: 'keyboardLayer',
     y: codeLayer.height,
-    height: screenHeight * 0.26,
+    height: screenHeight * 0.33,
     width: screenWidth,
     backgroundColor: "red",
     z: 1,
     index: 2
 
+modeSwitch = new Layer
+    name: 'modeLayer'
+    y: 0,
+    x: screenWidth - 100,
+    height: 100,
+    width: 100,
+    backgroundColor: "yellow",
+    z: 5,
+    index: 3,
+
+modeSwitch.modeData = 'preview'
+modeSwitch.on Events.Click, (event, layer) ->
+  # toggle mode
+  if layer.modeData is 'preview'
+    layer.backgroundColor = 'green'
+    layer.modeData = 'test'
+    startTracking()
+  else
+    layer.backgroundColor = 'yellow'
+    layer.modeData = 'preview'
+    stopTracking()
+
+
+## Track keyboard performance ##
+defaultMetrics = {
+  numBackspaces: 0,
+  numStrokes: {
+    action: 0,
+    char: 0
+  },
+  numStrokesForKeywords: 0,
+  totalDuration: 0,
+  mttc: {}  # Mean time to type a character
+}
+
+metrics = defaultMetrics
+
+stopTracking = () ->
+  console.log "METRICS", metrics
+
+startTracking = () ->
+  metrics = defaultMetrics
+
 
 addToCode = (char) ->
-    codeLayer.customData.text += char
+    if char is '\b'
+      codeLayer.customData.text = codeLayer.customData.text.slice(0, -1);
+    else
+      codeLayer.customData.text += char
     codeLayer.html = "<pre style='font-size: 56px; padding: 30px; word-wrap: break-word; line-height: 65px'>" + codeLayer.customData.text + "</pre>"
 
 isFixedWidthKey = (key) ->
@@ -37,9 +83,9 @@ keyboardRowDimensions = (startX, startY, line, lineno, parentLayer) ->
   #   - line 2 must always have extra left and right padding
 
   # Constants
-  padding = 10
+  padding = 5
   actionKeyWidth = 70
-  buttonHeight = 60
+  buttonHeight = 80
   line2Padding = 30
 
   lineWidth = if lineno isnt 2 then parentLayer.width else (parentLayer.width - 2*line2Padding)
@@ -66,6 +112,7 @@ keyboardRowDimensions = (startX, startY, line, lineno, parentLayer) ->
 
 drawKeyboardRow = (startX, startY, line, lineno, parentLayer) ->
 
+    interlinePadding = 10
     [startX, startY, buttonWidth, buttonHeight, padding, actionKeyWidth] = keyboardRowDimensions(startX, startY, line, lineno, parentLayer)
 
     console.log lineno, startX, startY, buttonWidth, buttonHeight, padding, actionKeyWidth
@@ -96,7 +143,7 @@ drawKeyboardRow = (startX, startY, line, lineno, parentLayer) ->
         buttonLayer.on Events.Click, handleKeyClick
 
     # Return y position of next row for chaining
-    return startY + buttonHeight + padding
+    return startY + buttonHeight + interlinePadding
 
 
 handleKeyClick = (event, layer) ->
