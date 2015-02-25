@@ -5,7 +5,7 @@ window.Framer.Defaults.DeviceView = {
   "deviceScale" : -1,
   "orientation" : 0,
   "contentScale" : 1,
-  "deviceType" : "iphone-5s-gold"
+  "deviceType" : "iphone-5s-silver"
 };
 
 window.FramerStudioInfo = {
