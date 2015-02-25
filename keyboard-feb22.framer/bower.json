@@ -1,0 +1,20 @@
+{
+  "name": "keyboard-feb22.framer",
+  "version": "0.0.0",
+  "homepage": "https://github.com/prokilogrammer/superlime-design",
+  "authors": [
+    "Sanath Kumar Ramesh <sanath@superlime.org>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fontawesome": "~4.3.0"
+  }
+}
