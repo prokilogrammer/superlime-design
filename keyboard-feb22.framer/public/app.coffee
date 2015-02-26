@@ -68,7 +68,9 @@ tracking = false;
 
 remoteReportMetric = () ->
   # Hacky as fuck reporting of metrics back to hosting server
-  Utils.domLoadData("/"+JSON.stringify(metrics, null, 2))
+  xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", "/report?val=" + JSON.stringify(metrics, null,2), true)
+  xmlhttp.send()
 
 stopTracking = () ->
   tracking = false
