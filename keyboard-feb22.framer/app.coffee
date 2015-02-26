@@ -70,7 +70,8 @@ addToCode = (char) ->
       codeLayer.customData.text = codeLayer.customData.text.slice(0, -1);
     else
       codeLayer.customData.text += char
-    codeLayer.html = "<pre style='font-size: 56px; padding: 30px; word-wrap: break-word; line-height: 65px'>" + codeLayer.customData.text + "</pre>"
+
+    codeLayer.html = "<div class='code'><pre>" + codeLayer.customData.text + "<span class='blink'>|</span></pre></div>"
 
 isFixedWidthKey = (key) ->
   return key.moreClasses is 'action'
