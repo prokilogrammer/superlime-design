@@ -53,19 +53,69 @@ defaultMetrics = {
   },
   numStrokesForKeywords: 0,
   totalDuration: 0,
-  mttc: {}  # Mean time to type a character
+  charstats: {}  # Mean time to type a character
+
+  # Used internally for tracking
+  _internal: {
+    startTime: 0,
+    endTime: 0,
+    lastCharTime: 0
+  }
 }
 
-metrics = defaultMetrics
+metrics = {};
+tracking = false;
+
+remoteReportMetric = () ->
+  # Hacky as fuck reporting of metrics back to hosting server
+  Utils.domLoadData("/"+JSON.stringify(metrics, null, 2))
 
 stopTracking = () ->
-  console.log "METRICS", metrics
+  tracking = false
+  metrics._internal.endTime = Date.now();
+  metrics.totalDuration = metrics._internal.endTime - metrics._internal.startTime
+  console.log "METRICS", JSON.stringify(metrics, null, 2)
+  remoteReportMetric()
 
 startTracking = () ->
-  metrics = defaultMetrics
+  tracking = true
+  metrics = _.cloneDeep(defaultMetrics)
+  metrics._internal.startTime = Date.now();
 
+reportAction = (key) ->
+  if !tracking
+    return
+
+  # If first key typed is an action key, record it. This will accurately track time taken to type first char.
+  if !metrics._internal.lastCharTime
+    metrics._internal.lastCharTime = Date.now();
+
+  metrics.numStrokes.action += 1
+
+reportChar = (char) ->
+  if !tracking
+    return
+
+  now = Date.now()
+
+  metrics.numBackspaces += if char is '\b' then 1 else 0
+  metrics.numStrokes.char += 1
+
+  ## Store char stats
+  if !_.has(metrics.charstats, char)
+    metrics.charstats[char] = {timeToType: 0, count: 0}
+
+  lastCharTime = metrics._internal.lastCharTime
+  metrics._internal.lastCharTime = now
+
+  # Not enough data to store for first character
+  if lastCharTime
+    timeToType = now - lastCharTime
+    metrics.charstats[char].timeToType += timeToType
+    metrics.charstats[char].count += 1
 
 addToCode = (char) ->
+
     if char is '\b'
       codeLayer.customData.text = codeLayer.customData.text.slice(0, -1);
     else
@@ -149,8 +199,8 @@ drawKeyboardRow = (startX, startY, line, lineno, parentLayer) ->
 
 handleKeyClick = (event, layer) ->
   switch layer.keyData.action
-      when 'data' then addToCode(layer.keyData.value)
-      when 'showView' then showKeyboardView(layer.keyData.value)
+      when 'data' then addToCode(layer.keyData.value); reportChar(layer.keyData.value)
+      when 'showView' then showKeyboardView(layer.keyData.value); reportAction(layer.keyData)
       else console.log "Unsupport key action", layer.keyData
 
 
