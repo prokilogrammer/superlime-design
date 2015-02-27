@@ -1,4 +1,4 @@
-#document.body.style.cursor = "auto"
+document.body.style.cursor = "auto"
 
 screenWidth = 640
 screenHeight = 1130
@@ -132,12 +132,13 @@ keyboardRowDimensions = (startX, startY, line, lineno, parentLayer) ->
 
   # Calculate dimensions and coordinates for each row of the keyboard
   #   - Stretch all character keys and use fixed width for action keys
-  #   - All keys get a right padding. First key gets a left padding also
   #   - line 2 must always have extra left and right padding
+  #   - To make the clickable area fill the gutter between keys, all keys get a right border. Since
+  #     borders are within the div's height/width, don't add the border size when calculate key size.
 
   # Constants
   padding = 5
-  actionKeyWidth = 70
+  actionKeyWidth = 75
   buttonHeight = 80
   line2Padding = 30
 
@@ -148,7 +149,6 @@ keyboardRowDimensions = (startX, startY, line, lineno, parentLayer) ->
   totalPadding = padding   # account for left padding for first button
   numNonActionKeys = 0
   _.forEach line, (key) ->
-    totalPadding += padding
     if isFixedWidthKey(key)
       fixedSize += actionKeyWidth
     else
@@ -188,7 +188,8 @@ drawKeyboardRow = (startX, startY, line, lineno, parentLayer) ->
             width: width,
             backgroundColor: backgroundColor
 
-        curX += (width + padding)
+        curX += (width)
+        buttonLayer.style.borderRight = padding + "px solid red";
         buttonLayer.bringToFront()
         buttonLayer.html = html
         buttonLayer.keyData = key
