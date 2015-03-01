@@ -188,28 +188,78 @@ drawKeyboardRow = (startX, startY, line, lineno, parentLayer) ->
             width: width,
             backgroundColor: backgroundColor
 
+        clickLayer = new Layer
+            superLayer: parentLayer,
+            x: curX,
+            y: startY,
+            height: buttonLayer.height,
+            width: buttonLayer.width,
+            backgroundColor: 'transparent'
+
+        buttonLayer.placeBehind(clickLayer);
+        clickLayer.customData = {};
+        clickLayer.customData.buttonLayer = buttonLayer;
+        clickLayer.customData.original = {
+          height: clickLayer.height,
+          width: clickLayer.width
+          x: clickLayer.x,
+          y: clickLayer.y
+        }
+        clickLayers[key.value] = clickLayer;  # Store map of char to click layer.
+
         curX += (width)
         buttonLayer.style.borderRight = padding + "px solid red";
-        buttonLayer.bringToFront()
         buttonLayer.html = html
         buttonLayer.keyData = key
 
-        buttonLayer.on Events.Click, handleKeyClick
+        clickLayer.on Events.Click, handleKeyClick
 
     # Return y position of next row for chaining
     return startY + buttonHeight + interlinePadding
 
 
-handleKeyClick = (event, layer) ->
+handleKeyClick = (event, clickLayer) ->
+  layer = clickLayer.customData.buttonLayer;
   switch layer.keyData.action
-      when 'data' then addToCode(layer.keyData.value); reportChar(layer.keyData.value)
+      when 'data' then addToCode(layer.keyData.value); reportChar(layer.keyData.value); adjustClickArea();
       when 'showView' then showKeyboardView(layer.keyData.value); reportAction(layer.keyData)
       else console.log "Unsupport key action", layer.keyData
+
+
+adjustClickArea = () ->
+
+  # reset click area for all layers
+  for layer in _.values(clickLayers)
+    layer.x = layer.customData.original.x;
+    layer.y = layer.customData.original.y;
+    layer.width = layer.customData.original.width;
+    layer.height = layer.customData.original.height;
+
+
+  # Get current view contents
+  code = codeLayer.customData.text;
+
+  # For testing purposes, here is a static size map
+  nextchar = {'a': [{char: 'b', p: 1}, {char: 'x', p: 0.2}], 'w': [{char: 'c', p:0.5, }, {char: 'z', p: 0.8}]}
+
+  # Additional size for clickable area
+  extra = {width: 20, height: 20}
+
+  prevchar = _.last(code)
+  console.log(code, prevchar)
+  if nextchar[prevchar]
+    for next in nextchar[prevchar]
+      layer = clickLayers[next.char]
+      layer.width = layer.customData.original.width + extra.width * next.p
+      layer.height = layer.customData.original.height + extra.height * next.p
+      layer.x = layer.customData.original.x - Math.round((extra.width * next.p)/2)
+      layer.y = layer.customData.original.y - Math.round((extra.height * next.p)/2)
 
 
 # For each view, create a view layer with keys as its sublayer. When toggling between views,
 # simply bring the view to the front
 viewLayers = {}
+clickLayers = {}
 
 showKeyboardView = (viewName) ->
 
