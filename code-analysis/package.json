@@ -1,0 +1,16 @@
+{
+  "name": "code-analysis",
+  "version": "0.0.0",
+  "description": "",
+  "main": "analyze.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^0.9.0",
+    "lodash": "^3.3.1",
+    "shelljs": "^0.3.0"
+  }
+}
