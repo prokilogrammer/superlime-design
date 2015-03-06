@@ -48,32 +48,56 @@ var updateBigram = function(contents){
 };
 
 
-var allFiles = shell.find('.').filter(function(file) { return file.match(extRegex)})
-var analyzedFiles = JSON.parse(fs.readFileSync("analyzedFiles.json"));
-var toBeAnalyzed = _.difference(allFiles, analyzedFiles);
-console.log(toBeAnalyzed.length + " files yet to be analyzed");
-toBeAnalyzed = toBeAnalyzed.slice(0, 2);
-//var toBeAnalyzed = ["code/django-master/django/test/client.py"]
+async.waterfall([
 
-async.each(toBeAnalyzed, function(file, callback){
+    function(callback){
+        var allFiles = shell.find('.').filter(function(file) { return file.match(extRegex)})
+        var analyzedFiles = JSON.parse(fs.readFileSync("analyzedFiles.json"));
+        var toBeAnalyzed = _.difference(allFiles, analyzedFiles);
+        console.log(toBeAnalyzed.length + " files yet to be analyzed");
+//        toBeAnalyzed = toBeAnalyzed.slice(0, 2);
 
-    console.log("Analyzing " + file);
-    var contents = fs.readFileSync(file).toString();
+        bigrams = JSON.parse(fs.readFileSync("bigrams.json"));
 
-    // Cleanup
-    contents = _.reduce(cleanupRegex, function(result, regex){
-        return result.replace(regex, '');
-    }, contents);
+        callback(null, toBeAnalyzed, analyzedFiles);
+    },
 
+    function(toBeAnalyzed, analyzedFiles, callback){
 
-    updateBigram(contents);
-    callback(null);
-},
+        async.map(toBeAnalyzed, function(file, cb){
+            console.log("Analyzing " + file);
+            fs.readFile(file, {encoding: "UTF-8"}, cb);
+        },
+        function(err, fileContents){
+            callback(err, fileContents, toBeAnalyzed, analyzedFiles)
+        })
+    },
 
-function(err){
+    function(fileContents, toBeAnalyzed, analyzedFiles, callback){
 
-    fs.writeFileSync('bigrams.json', JSON.stringify(bigrams, null, 2));
+        async.each(fileContents, function(contents, cb){
 
-});
+            // Cleanup
+            contents = _.reduce(cleanupRegex, function(result, regex){
+                return result.replace(regex, '');
+            }, contents);
+
+            updateBigram(contents);
+            cb(null);
+        },
+        function(err){
+            callback(err, toBeAnalyzed, analyzedFiles);
+        });
+    },
+
+    function(toBeAnalyzed, analyzedFiles, callback){
+
+        fs.writeFile('bigrams.json', JSON.stringify(bigrams, null, 2), function(err){
+            if (err) return callback(err);
+
+            fs.writeFile('analyzedFiles.json', JSON.stringify(_.union(toBeAnalyzed, analyzedFiles), null, 2), callback);
+        });
+    }
+])
 
 
