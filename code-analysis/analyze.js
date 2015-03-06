@@ -51,11 +51,10 @@ var updateBigram = function(contents){
 async.waterfall([
 
     function(callback){
-        var allFiles = shell.find('.').filter(function(file) { return file.match(extRegex)})
+        var allFiles = shell.find('./code').filter(function(file) { return file.match(extRegex)})
         var analyzedFiles = JSON.parse(fs.readFileSync("analyzedFiles.json"));
         var toBeAnalyzed = _.difference(allFiles, analyzedFiles);
         console.log(toBeAnalyzed.length + " files yet to be analyzed");
-//        toBeAnalyzed = toBeAnalyzed.slice(0, 2);
 
         bigrams = JSON.parse(fs.readFileSync("bigrams.json"));
 
