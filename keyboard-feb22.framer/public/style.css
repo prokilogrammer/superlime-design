@@ -1,12 +1,12 @@
 .code {
-    font-size: 56px;
+    font-size: 30px;
     padding: 30px 10px 30px 30px;
     word-wrap: break-word;
     line-height: 65px;
 }
 
 .code pre {
-    display: inline-block
+    display: block
 }
 
 /* @group Blink */

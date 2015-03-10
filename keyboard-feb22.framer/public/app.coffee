@@ -4,7 +4,7 @@ screenWidth = 640
 screenHeight = 1130
 
 codeLayer = new Layer
-    height: screenHeight * 0.67,
+    height: screenHeight * 0.65,
     width: screenWidth,
     backgroundColor: "blue",
     scrollHorizontal: false
@@ -15,7 +15,7 @@ codeLayer.html = ''
 keyboardLayer = new Layer
     name: 'keyboardLayer',
     y: codeLayer.height,
-    height: screenHeight * 0.33,
+    height: screenHeight * 0.35,
     width: screenWidth,
     backgroundColor: "red",
     z: 1,
@@ -121,6 +121,8 @@ addToCode = (char) ->
     if char is '\b'
       codeLayer.customData.text = codeLayer.customData.text.slice(0, -1);
     else
+      if char == '\t'
+        char = '  '  # one tab = two spaces
       codeLayer.customData.text += char
 
     codeLayer.html = "<div class='code'><pre>" + codeLayer.customData.text + "<span class='blink'>|</span></pre></div>"
@@ -139,7 +141,7 @@ keyboardRowDimensions = (startX, startY, line, lineno, parentLayer) ->
   # Constants
   padding = 5
   actionKeyWidth = 75
-  buttonHeight = 80
+  buttonHeight = 85
   line2Padding = 30
 
   lineWidth = if lineno isnt 2 then parentLayer.width else (parentLayer.width - 2*line2Padding)
@@ -226,6 +228,30 @@ handleKeyClick = (event, clickLayer) ->
       else console.log "Unsupport key action", layer.keyData
 
 
+nextCharProbability = {};
+
+loadNextCharProbability = (cb) ->
+  allCharsInKeyboard = _.sortBy(_.keys(clickLayers));
+  $.getJSON "/nextcharprob", (data) ->
+
+    _.forOwn data, (freqmap, thischar) ->
+      if !_.contains(allCharsInKeyboard, thischar)
+        return
+
+      total = freqmap.total
+      nextCharProbability[thischar] = [];
+      _.forOwn freqmap, (freq, nextchar) ->
+        if !_.contains(allCharsInKeyboard, nextchar)
+          return
+
+        p = freq.freq/total
+        if p > 0.01    # Keep only significant items here.
+          nextCharProbability[thischar].push({char: nextchar, p: p})
+
+    console.log(nextCharProbability);
+    cb(null)
+
+
 adjustClickArea = () ->
 
   # reset click area for all layers
@@ -234,26 +260,47 @@ adjustClickArea = () ->
     layer.y = layer.customData.original.y;
     layer.width = layer.customData.original.width;
     layer.height = layer.customData.original.height;
+#    layer.backgroundColor = "transparent";
 
 
   # Get current view contents
   code = codeLayer.customData.text;
 
   # For testing purposes, here is a static size map
-  nextchar = {'a': [{char: 'b', p: 1}, {char: 'x', p: 0.2}], 'w': [{char: 'c', p:0.5, }, {char: 'z', p: 0.8}]}
+  nextchar = nextCharProbability;
 
   # Additional size for clickable area
-  extra = {width: 20, height: 20}
+  extra = {width: 30, height: 30}
 
   prevchar = _.last(code)
   console.log(code, prevchar)
   if nextchar[prevchar]
     for next in nextchar[prevchar]
+      if !_.has(clickLayers, next.char)
+        continue
+
       layer = clickLayers[next.char]
       layer.width = layer.customData.original.width + extra.width * next.p
       layer.height = layer.customData.original.height + extra.height * next.p
       layer.x = layer.customData.original.x - Math.round((extra.width * next.p)/2)
       layer.y = layer.customData.original.y - Math.round((extra.height * next.p)/2)
+#      layer.backgroundColor = "yellow"
+
+
+  # Adjust z-index of click layers based on area of the layer. Bigger layers must be on the top
+  clickLayerSmallToBig = _.sortBy _.values(clickLayers), (layer) ->
+    return layer.width * layer.height;
+
+  minZIndex = _.min(_.map(_.values(clickLayers), (layer) -> return layer.index ))
+  prevArea = 0
+  for layer in clickLayerSmallToBig
+    layer.index = minZIndex
+
+    # Layers with same area can get the same z-index. Only when area changes, I increment the index
+    # Because layers are sorted, current layer is always bigger than previous layer.
+    if prevArea != (layer.width * layer.height)
+      prevArea = layer.width * layer.height
+      minZIndex++
 
 
 # For each view, create a view layer with keys as its sublayer. When toggling between views,
@@ -294,3 +341,7 @@ renderKeyboard = (kbLayer) ->
 
 # render the keyboard
 renderKeyboard keyboardLayer
+loadNextCharProbability (err) ->
+  if err
+    return console.log err;
+  alert('All set');

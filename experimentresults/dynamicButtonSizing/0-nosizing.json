@@ -1,0 +1,620 @@
+[
+  {
+    "numBackspaces": 53,
+    "numStrokes": {
+      "action": 0,
+      "char": 349
+    },
+    "numStrokesForKeywords": 0,
+    "totalDuration": 117026,
+    "charstats": {
+      "d": {
+        "timeToType": 466,
+        "count": 1
+      },
+      "e": {
+        "timeToType": 9201,
+        "count": 33
+      },
+      "f": {
+        "timeToType": 5083,
+        "count": 14
+      },
+      " ": {
+        "timeToType": 10715,
+        "count": 41
+      },
+      "i": {
+        "timeToType": 6313,
+        "count": 12
+      },
+      "n": {
+        "timeToType": 9534,
+        "count": 24
+      },
+      "t": {
+        "timeToType": 3203,
+        "count": 12
+      },
+      "s": {
+        "timeToType": 7587,
+        "count": 27
+      },
+      "l": {
+        "timeToType": 1582,
+        "count": 9
+      },
+      "u": {
+        "timeToType": 1264,
+        "count": 6
+      },
+      "a": {
+        "timeToType": 6531,
+        "count": 22
+      },
+      "r": {
+        "timeToType": 5981,
+        "count": 16
+      },
+      "g": {
+        "timeToType": 3236,
+        "count": 6
+      },
+      "k": {
+        "timeToType": 2201,
+        "count": 3
+      },
+      "w": {
+        "timeToType": 1951,
+        "count": 5
+      },
+      "\b": {
+        "timeToType": 17300,
+        "count": 53
+      },
+      "\n": {
+        "timeToType": 3899,
+        "count": 8
+      },
+      "m": {
+        "timeToType": 1542,
+        "count": 10
+      },
+      "o": {
+        "timeToType": 2477,
+        "count": 9
+      },
+      "p": {
+        "timeToType": 2635,
+        "count": 11
+      },
+      "c": {
+        "timeToType": 5308,
+        "count": 13
+      },
+      "b": {
+        "timeToType": 383,
+        "count": 1
+      },
+      "h": {
+        "timeToType": 1133,
+        "count": 4
+      },
+      "x": {
+        "timeToType": 3624,
+        "count": 6
+      },
+      "j": {
+        "timeToType": 594,
+        "count": 1
+      },
+      "v": {
+        "timeToType": 383,
+        "count": 1
+      }
+    },
+    "_internal": {
+      "startTime": 1425749568057,
+      "endTime": 1425749685083,
+      "lastCharTime": 1425749683650
+    }
+  },
+  {
+    "numBackspaces": 56,
+    "numStrokes": {
+      "action": 0,
+      "char": 336
+    },
+    "numStrokesForKeywords": 0,
+    "totalDuration": 104739,
+    "charstats": {
+      "d": {
+        "timeToType": 465,
+        "count": 3
+      },
+      "e": {
+        "timeToType": 7383,
+        "count": 32
+      },
+      "f": {
+        "timeToType": 5375,
+        "count": 14
+      },
+      " ": {
+        "timeToType": 10518,
+        "count": 40
+      },
+      "k": {
+        "timeToType": 1652,
+        "count": 4
+      },
+      "n": {
+        "timeToType": 9390,
+        "count": 24
+      },
+      "o": {
+        "timeToType": 2035,
+        "count": 8
+      },
+      "\b": {
+        "timeToType": 16120,
+        "count": 56
+      },
+      "i": {
+        "timeToType": 5881,
+        "count": 11
+      },
+      "t": {
+        "timeToType": 2636,
+        "count": 9
+      },
+      "s": {
+        "timeToType": 5370,
+        "count": 20
+      },
+      "l": {
+        "timeToType": 2538,
+        "count": 11
+      },
+      "u": {
+        "timeToType": 3604,
+        "count": 8
+      },
+      "a": {
+        "timeToType": 4018,
+        "count": 19
+      },
+      "w": {
+        "timeToType": 798,
+        "count": 3
+      },
+      "r": {
+        "timeToType": 9367,
+        "count": 19
+      },
+      "g": {
+        "timeToType": 2699,
+        "count": 7
+      },
+      "\n": {
+        "timeToType": 3298,
+        "count": 8
+      },
+      "m": {
+        "timeToType": 1276,
+        "count": 8
+      },
+      "p": {
+        "timeToType": 2170,
+        "count": 8
+      },
+      "c": {
+        "timeToType": 1584,
+        "count": 8
+      },
+      "x": {
+        "timeToType": 1631,
+        "count": 5
+      },
+      "b": {
+        "timeToType": 717,
+        "count": 2
+      },
+      "j": {
+        "timeToType": 667,
+        "count": 1
+      },
+      "h": {
+        "timeToType": 1067,
+        "count": 5
+      },
+      "v": {
+        "timeToType": 566,
+        "count": 2
+      }
+    },
+    "_internal": {
+      "startTime": 1425749706321,
+      "endTime": 1425749811060,
+      "lastCharTime": 1425749810261
+    }
+  },
+  {
+    "numBackspaces": 63,
+    "numStrokes": {
+      "action": 0,
+      "char": 357
+    },
+    "numStrokesForKeywords": 0,
+    "totalDuration": 112442,
+    "charstats": {
+      "d": {
+        "timeToType": 364,
+        "count": 2
+      },
+      "e": {
+        "timeToType": 7388,
+        "count": 31
+      },
+      " ": {
+        "timeToType": 11266,
+        "count": 43
+      },
+      "\b": {
+        "timeToType": 20105,
+        "count": 63
+      },
+      "f": {
+        "timeToType": 4330,
+        "count": 15
+      },
+      "i": {
+        "timeToType": 5035,
+        "count": 11
+      },
+      "n": {
+        "timeToType": 11180,
+        "count": 22
+      },
+      "t": {
+        "timeToType": 2368,
+        "count": 10
+      },
+      "s": {
+        "timeToType": 8759,
+        "count": 26
+      },
+      "l": {
+        "timeToType": 1784,
+        "count": 8
+      },
+      "u": {
+        "timeToType": 1781,
+        "count": 6
+      },
+      "a": {
+        "timeToType": 6208,
+        "count": 26
+      },
+      "r": {
+        "timeToType": 4932,
+        "count": 16
+      },
+      "g": {
+        "timeToType": 2548,
+        "count": 6
+      },
+      "w": {
+        "timeToType": 783,
+        "count": 3
+      },
+      "k": {
+        "timeToType": 1183,
+        "count": 3
+      },
+      "h": {
+        "timeToType": 2881,
+        "count": 5
+      },
+      "\n": {
+        "timeToType": 4932,
+        "count": 11
+      },
+      "m": {
+        "timeToType": 1060,
+        "count": 9
+      },
+      "o": {
+        "timeToType": 1606,
+        "count": 7
+      },
+      "p": {
+        "timeToType": 2667,
+        "count": 9
+      },
+      "c": {
+        "timeToType": 3042,
+        "count": 9
+      },
+      "b": {
+        "timeToType": 233,
+        "count": 1
+      },
+      "x": {
+        "timeToType": 1398,
+        "count": 6
+      },
+      "z": {
+        "timeToType": 516,
+        "count": 2
+      },
+      "j": {
+        "timeToType": 863,
+        "count": 3
+      },
+      "y": {
+        "timeToType": 132,
+        "count": 1
+      },
+      "v": {
+        "timeToType": 733,
+        "count": 2
+      }
+    },
+    "_internal": {
+      "startTime": 1425749827564,
+      "endTime": 1425749940006,
+      "lastCharTime": 1425749939173
+    }
+  },
+  {
+    "numBackspaces": 53,
+    "numStrokes": {
+      "action": 0,
+      "char": 336
+    },
+    "numStrokesForKeywords": 0,
+    "totalDuration": 105621,
+    "charstats": {
+      "d": {
+        "timeToType": 1536,
+        "count": 7
+      },
+      "e": {
+        "timeToType": 6453,
+        "count": 30
+      },
+      "f": {
+        "timeToType": 6299,
+        "count": 11
+      },
+      " ": {
+        "timeToType": 8761,
+        "count": 41
+      },
+      "i": {
+        "timeToType": 5723,
+        "count": 10
+      },
+      "n": {
+        "timeToType": 8470,
+        "count": 24
+      },
+      "t": {
+        "timeToType": 3447,
+        "count": 12
+      },
+      "\b": {
+        "timeToType": 13735,
+        "count": 53
+      },
+      "s": {
+        "timeToType": 6130,
+        "count": 22
+      },
+      "l": {
+        "timeToType": 5016,
+        "count": 9
+      },
+      "u": {
+        "timeToType": 1635,
+        "count": 8
+      },
+      "a": {
+        "timeToType": 5021,
+        "count": 22
+      },
+      "r": {
+        "timeToType": 6755,
+        "count": 14
+      },
+      "h": {
+        "timeToType": 1669,
+        "count": 6
+      },
+      "k": {
+        "timeToType": 1249,
+        "count": 4
+      },
+      "g": {
+        "timeToType": 2403,
+        "count": 6
+      },
+      "w": {
+        "timeToType": 1454,
+        "count": 6
+      },
+      "\n": {
+        "timeToType": 4735,
+        "count": 8
+      },
+      "m": {
+        "timeToType": 2084,
+        "count": 8
+      },
+      "o": {
+        "timeToType": 2251,
+        "count": 7
+      },
+      "p": {
+        "timeToType": 1534,
+        "count": 9
+      },
+      "c": {
+        "timeToType": 1732,
+        "count": 7
+      },
+      "y": {
+        "timeToType": 200,
+        "count": 1
+      },
+      "x": {
+        "timeToType": 2133,
+        "count": 4
+      },
+      "j": {
+        "timeToType": 1300,
+        "count": 2
+      },
+      "b": {
+        "timeToType": 184,
+        "count": 1
+      },
+      "v": {
+        "timeToType": 1782,
+        "count": 3
+      }
+    },
+    "_internal": {
+      "startTime": 1425750203008,
+      "endTime": 1425750308629,
+      "lastCharTime": 1425750307829
+    }
+  },
+
+  {
+    "numBackspaces": 45,
+    "numStrokes": {
+      "action": 0,
+      "char": 321
+    },
+    "numStrokesForKeywords": 0,
+    "totalDuration": 93707,
+    "charstats": {
+      "d": {
+        "timeToType": 350,
+        "count": 2
+      },
+      "e": {
+        "timeToType": 7690,
+        "count": 31
+      },
+      "f": {
+        "timeToType": 4453,
+        "count": 14
+      },
+      " ": {
+        "timeToType": 11288,
+        "count": 44
+      },
+      "i": {
+        "timeToType": 3921,
+        "count": 10
+      },
+      "n": {
+        "timeToType": 9581,
+        "count": 26
+      },
+      "t": {
+        "timeToType": 3930,
+        "count": 12
+      },
+      "s": {
+        "timeToType": 7041,
+        "count": 20
+      },
+      "l": {
+        "timeToType": 1146,
+        "count": 7
+      },
+      "u": {
+        "timeToType": 1365,
+        "count": 7
+      },
+      "\b": {
+        "timeToType": 12639,
+        "count": 45
+      },
+      "a": {
+        "timeToType": 3845,
+        "count": 20
+      },
+      "r": {
+        "timeToType": 7319,
+        "count": 17
+      },
+      "g": {
+        "timeToType": 1566,
+        "count": 5
+      },
+      "k": {
+        "timeToType": 599,
+        "count": 2
+      },
+      "w": {
+        "timeToType": 619,
+        "count": 2
+      },
+      "\n": {
+        "timeToType": 3169,
+        "count": 8
+      },
+      "m": {
+        "timeToType": 1056,
+        "count": 9
+      },
+      "o": {
+        "timeToType": 3019,
+        "count": 9
+      },
+      "p": {
+        "timeToType": 1598,
+        "count": 9
+      },
+      "c": {
+        "timeToType": 2298,
+        "count": 8
+      },
+      "x": {
+        "timeToType": 1132,
+        "count": 6
+      },
+      "z": {
+        "timeToType": 300,
+        "count": 1
+      },
+      "j": {
+        "timeToType": 500,
+        "count": 1
+      },
+      "y": {
+        "timeToType": 183,
+        "count": 1
+      },
+      "h": {
+        "timeToType": 667,
+        "count": 3
+      },
+      "v": {
+        "timeToType": 234,
+        "count": 1
+      }
+    },
+    "_internal": {
+      "startTime": 1425750366419,
+      "endTime": 1425750460126,
+      "lastCharTime": 1425750459326
+    }
+  }
+]
+
