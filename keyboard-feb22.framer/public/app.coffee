@@ -214,7 +214,7 @@ drawKeyboardRow = (startX, startY, line, lineno, parentLayer) ->
         buttonLayer.html = html
         buttonLayer.keyData = key
 
-        clickLayer.on Events.Click, handleKeyClick
+#        clickLayer.on Events.Click, handleKeyClick
 
     # Return y position of next row for chaining
     return startY + buttonHeight + interlinePadding
@@ -338,10 +338,87 @@ renderKeyboard = (kbLayer) ->
 
     showKeyboardView(keymap.meta.startView);
 
-
 # render the keyboard
 renderKeyboard keyboardLayer
 loadNextCharProbability (err) ->
   if err
     return console.log err;
-  alert('All set');
+
+###################### Canvas Layer stuff ###################
+drawClickFeedback = (x, y) ->
+
+  feedbackCircle = new Layer
+    name: 'feedbackCircle'
+    x: x,
+    y: y,
+    width: 20,
+    height: 20,
+    backgroundColor: "magenta"
+
+  feedbackCircle.style.border = "10px solid magenta"
+  feedbackCircle.borderRadius = feedbackCircle.width/2
+
+  feedbackCircle.animate({
+    properties: {scale: 2, opacity: 0}
+    time: 0.5,
+#    curve: "ease-in-out"
+  })
+
+  feedbackCircle.on Events.AnimationEnd, (event, layer) ->
+    layer.destroy()
+
+moveCodeCharHighlight = () ->
+  text = codeLayer.customData.text;
+  prevHighlightChar = text[codeLayer.customData.highlightPos]
+
+  codeLayer.customData.highlightPos += 1
+  highlightPos = codeLayer.customData.highlightPos
+
+  before = ''
+  if (highlightPos > 0)
+    before = text.slice(0, highlightPos)
+
+  after = text.slice(highlightPos+1, text.length)
+  at = text[highlightPos]
+
+  codeLayer.html = "<div class='code'><pre>" + before + "<span class='highlight'>" + at + "</span>" + after + "</pre></div>"
+  return prevHighlightChar
+
+registerCanvasCharClick = (char, x, y) ->
+  # save event that user touched at pos x,y to type 'char'
+  if !_.has(metrics, 'canvasClickTrack')
+    return
+
+  metrics.canvasClickTrack.push({char: char, x: x, y: y})
+
+canvasClickHandler = (event, canvasLayer) ->
+  drawClickFeedback(event.pageX, event.pageY)
+  clickedChar = moveCodeCharHighlight()
+  registerCanvasCharClick clickedChar, event.pageX, event.pageY
+
+renderCanvasLayer = (kbLayer) ->
+  codeLayer.customData.highlightPos = -1;
+
+  canvasLayer = new Layer
+    x: kbLayer.x,
+    y: kbLayer.y,
+    width: kbLayer.width,
+    height: kbLayer.height,
+    backgroundColor: "rgba(0,255,0,0.9)"
+  canvasLayer.on Events.Click, canvasClickHandler
+
+modifyMetricForCanvas = () ->
+  defaultMetrics['canvasClickTrack'] = []
+
+renderCanvasLayer(keyboardLayer)
+addToCode("def init self fun args\n
+  name none app url\n
+  namespaces none fun self kwargs\n
+  if namespaces x for x in\n
+  namespaces in x else self\n
+  namespaces join if not hasattr\n
+  func name self path return\n
+  ResolverMatch func args\n
+  repr getitem index")
+moveCodeCharHighlight()
+modifyMetricForCanvas()

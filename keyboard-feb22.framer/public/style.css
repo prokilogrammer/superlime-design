@@ -1,5 +1,5 @@
 .code {
-    font-size: 30px;
+    font-size: 35px;
     padding: 30px 10px 30px 30px;
     word-wrap: break-word;
     line-height: 65px;
@@ -7,6 +7,12 @@
 
 .code pre {
     display: block
+}
+
+.highlight {
+    background: white;
+    color: black;
+    padding: 5px;
 }
 
 /* @group Blink */
