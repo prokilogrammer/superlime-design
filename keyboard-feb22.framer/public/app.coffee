@@ -379,7 +379,10 @@ moveCodeCharHighlight = () ->
     before = text.slice(0, highlightPos)
 
   after = text.slice(highlightPos+1, text.length)
-  at = text[highlightPos]
+
+  at = ''
+  if (highlightPos < text.length)
+    at = text[highlightPos]
 
   codeLayer.html = "<div class='code'><pre>" + before + "<span class='highlight'>" + at + "</span>" + after + "</pre></div>"
   return prevHighlightChar
@@ -411,14 +414,14 @@ modifyMetricForCanvas = () ->
   defaultMetrics['canvasClickTrack'] = []
 
 renderCanvasLayer(keyboardLayer)
-addToCode("def init self fun args\n
-  name none app url\n
-  namespaces none fun self kwargs\n
-  if namespaces x for x in\n
-  namespaces in x else self\n
-  namespaces join if not hasattr\n
-  func name self path return\n
-  ResolverMatch func args\n
-  repr getitem index")
+addToCode("""def init self fun args
+name none app url
+namespaces none self kwargs
+if namespaces x for x in
+namespaces in x else self
+namespaces join if hasattr
+func name self path return
+resolvermatch func args
+repr getitem index""")
 moveCodeCharHighlight()
 modifyMetricForCanvas()
