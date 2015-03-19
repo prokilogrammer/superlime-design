@@ -61,7 +61,8 @@ var plot = function(stats, prototypeImg){
 
     console.log("Creating stats image");
 
-    var img = gm(prototypeImg).strokeWidth(2);
+    var radius = 1;
+    var img = gm(prototypeImg);
 
     var randomColors = new RandomColor({}, _.keys(stats).length);
     var colors = _.map(randomColors.toHex().colors, function(hex){ return "#"+hex.value});
@@ -71,7 +72,7 @@ var plot = function(stats, prototypeImg){
         index += 1;
         img = img.stroke(colors[index]);
         _.forEach(positions, function(pos){
-            img.drawPoint(pos.x, pos.y)
+            img.drawCircle(pos.x-radius, pos.y-radius, pos.x+radius, pos.y+radius)
         })
     });
 
@@ -106,7 +107,9 @@ var stats = function(raw, prototypeImg){
     });
 
     // Plot the points on the prototype
-    if (prototypeImg) plot(cleaned, prototypeImg);
+    if (prototypeImg) {
+        plot(cleaned, prototypeImg);
+    }
 
 };
 
