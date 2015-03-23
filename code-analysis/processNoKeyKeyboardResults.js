@@ -72,7 +72,12 @@ var plot = function(stats, prototypeImg){
         index += 1;
         img = img.stroke(colors[index]);
         _.forEach(positions, function(pos){
-            img.drawCircle(pos.x-radius, pos.y-radius, pos.x+radius, pos.y+radius)
+//            img.drawCircle(pos.x-radius, pos.y-radius, pos.x+radius, pos.y+radius)
+
+            if (char == '\n') char = '<';
+            if (char == ' ') char = '__';
+
+            img.drawText(pos.x, pos.y, char);
         })
     });
 
@@ -108,6 +113,12 @@ var stats = function(raw, prototypeImg){
 
     // Plot the points on the prototype
     if (prototypeImg) {
+        // As an experiment, just plot the centroids
+        var centroidsOnly = {};
+        _.forOwn(cleaned, function(positions, char){
+            centroidsOnly[char] = [mean(positions)]
+        });
+
         plot(cleaned, prototypeImg);
     }
 
