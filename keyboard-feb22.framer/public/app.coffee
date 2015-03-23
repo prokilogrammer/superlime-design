@@ -1,5 +1,13 @@
 document.body.style.cursor = "auto"
 
+log = (args...) ->
+  $.ajax
+    type: "POST",
+    url: '/log',
+    data: JSON.stringify(args),
+    processData: false,
+    dataType: 'application/json'
+
 screenWidth = 640
 screenHeight = 1130
 
@@ -118,7 +126,10 @@ reportChar = (char) ->
 
 addToCode = (char) ->
 
-    if char is '\b'
+    if char is null
+      # Nothing to add if char is null
+      return
+    else if char is '\b'
       codeLayer.customData.text = codeLayer.customData.text.slice(0, -1);
     else
       if char == '\t'
@@ -165,12 +176,12 @@ keyboardRowDimensions = (startX, startY, line, lineno, parentLayer) ->
   return [startX, startY, buttonWidth, buttonHeight, padding, actionKeyWidth]
 
 
-drawKeyboardRow = (startX, startY, line, lineno, parentLayer) ->
+drawKeyboardRow = (startX, startY, line, lineno, parentLayer, viewName) ->
 
     interlinePadding = 10
     [startX, startY, buttonWidth, buttonHeight, padding, actionKeyWidth] = keyboardRowDimensions(startX, startY, line, lineno, parentLayer)
 
-    console.log lineno, startX, startY, buttonWidth, buttonHeight, padding, actionKeyWidth
+#    console.log lineno, startX, startY, buttonWidth, buttonHeight, padding, actionKeyWidth
 
     curX = startX
     for key in line
@@ -214,6 +225,7 @@ drawKeyboardRow = (startX, startY, line, lineno, parentLayer) ->
         buttonLayer.html = html
         buttonLayer.keyData = key
 
+        addButtonToPrediction(viewName, buttonLayer.screenFrame.x, buttonLayer.screenFrame.y, buttonLayer.height, buttonLayer.width, key.value);
 #        clickLayer.on Events.Click, handleKeyClick
 
     # Return y position of next row for chaining
@@ -333,16 +345,16 @@ renderKeyboard = (kbLayer) ->
         ypos = 0
         lineno = 1
         _.forEach lines, (line) ->
-            ypos = drawKeyboardRow 0, ypos, line, lineno, viewLayers[viewName]
+            ypos = drawKeyboardRow 0, ypos, line, lineno, viewLayers[viewName], viewName
             lineno++
 
     showKeyboardView(keymap.meta.startView);
 
 # render the keyboard
-renderKeyboard keyboardLayer
-loadNextCharProbability (err) ->
-  if err
-    return console.log err;
+#renderKeyboard keyboardLayer
+#loadNextCharProbability (err) ->
+#  if err
+#    return console.log err;
 
 ###################### Canvas Layer stuff ###################
 drawClickFeedback = (x, y) ->
@@ -387,17 +399,17 @@ moveCodeCharHighlight = () ->
   codeLayer.html = "<div class='code'><pre>" + before + "<span class='highlight'>" + at + "</span>" + after + "</pre></div>"
   return prevHighlightChar
 
-registerCanvasCharClick = (char, x, y) ->
-  # save event that user touched at pos x,y to type 'char'
-  if !_.has(metrics, 'canvasClickTrack')
-    return
-
-  metrics.canvasClickTrack.push({char: char, x: x, y: y})
-
-canvasClickHandler = (event, canvasLayer) ->
-  drawClickFeedback(event.pageX, event.pageY)
-  clickedChar = moveCodeCharHighlight()
-  registerCanvasCharClick clickedChar, event.pageX, event.pageY
+#registerCanvasCharClick = (char, x, y) ->
+#  # save event that user touched at pos x,y to type 'char'
+#  if !_.has(metrics, 'canvasClickTrack')
+#    return
+#
+#  metrics.canvasClickTrack.push({char: char, x: x, y: y})
+#
+#canvasClickHandler = (event, canvasLayer) ->
+#  drawClickFeedback(event.pageX, event.pageY)
+#  clickedChar = moveCodeCharHighlight()
+#  registerCanvasCharClick clickedChar, event.pageX, event.pageY
 
 renderCanvasLayer = (kbLayer) ->
   codeLayer.customData.highlightPos = -1;
@@ -410,18 +422,179 @@ renderCanvasLayer = (kbLayer) ->
     backgroundColor: "rgba(0,255,0,0.9)"
   canvasLayer.on Events.Click, canvasClickHandler
 
-modifyMetricForCanvas = () ->
-  defaultMetrics['canvasClickTrack'] = []
+#modifyMetricForCanvas = () ->
+#  defaultMetrics['canvasClickTrack'] = []
+#
+#renderCanvasLayer(keyboardLayer)
+#addToCode("""def init self fun args
+#name none app url
+#namespaces none self kwargs
+#if namespaces x for x in
+#namespaces in x else self
+#namespaces join if hasattr
+#func name self path return
+#resolvermatch func args
+#repr getitem index""")
+#moveCodeCharHighlight()
+#modifyMetricForCanvas()
 
+
+
+########### Predictive Keyboard Stuff ############
+# Predictions layout:
+# {
+#  viewName1: {
+#   x1: {y1: {}, y2: {}...},
+#   x2: {y1: {}, y2: {}},
+#   ....
+#  },
+#  viewName2: {.......}
+# }
+#
+#  Prediction obj for each x,y pos has following structure:
+#   { freq: [10], chars: [10] }
+#
+#  When the baseline qwerty is laid out, it will populate this map.
+predictions = {}
+
+addToPredictions = (viewName, x, y, char, incrementFn) ->
+  EMPTY_HISTORY_ENTRY = {freq: 0, char: ''}
+  MAX_HISTORY = 10
+
+  if (!_.has(predictions, viewName)) then predictions[viewName] = {}
+  if (!_.has(predictions[viewName], x)) then predictions[viewName][x] = {}
+  if (!_.has(predictions[viewName][x], y)) then predictions[viewName][x][y] = []
+
+  history = predictions[viewName][x][y]
+  index = _.findIndex(history, 'char', char);
+  if index == -1
+    # Char not found. Add it
+    # If history is not full, add to the end. We will sort the array later to keep in right order
+    # If history is full, find the char with lowest frequency and replace it
+    if history.length < MAX_HISTORY
+      history.push(EMPTY_HISTORY_ENTRY)
+      index = history.length-1
+    else
+      console.log("History for char " + char + " is full. ", history);
+      leastFreqIx = -1; leastFreq = -Infinity
+      _.forEach history, (obj, ix) ->
+        if obj && obj.freq < leastFreq
+          leastFreq = obj.freq
+          leastFreqIx = ix
+      history[leastFreqIx] = EMPTY_HISTORY_ENTRY
+      index = leastFreqIx
+
+  # Either char is found, or newly added. Anyway 'index' is the position of the char
+  history[index].freq += if incrementFn then incrementFn(history[index].freq) else 1;
+  history[index].char = char
+
+  # Sort the history by frequency for quick predictions
+  # NOTE: This creates a new array. Might bloat memory/gc
+  predictions[viewName][x][y] = _.sortByAll(history, 'freq')
+
+getPrediction = (viewName, x, y) ->
+  if predictions && predictions[viewName] && predictions[viewName][x] && predictions[viewName][x][y] && predictions[viewName][x][y][0]
+    return predictions[viewName][x][y][0]['char']
+  else
+    return null
+
+wrongPrediction = (viewName, x, y, predictedChar, correctChar) ->
+  PENALIZE = (val) -> return val*0.9  # Reduce val by 10%
+
+  console.log("WRONG PREDICTION ", viewName, x, y, predictedChar, correctChar)
+
+  # Predicted char is wrong. Find the history entry and penalize it
+  history = predictions[viewName][x][y]
+  ix = _.findIndex(history, 'char', predictedChar) # This should exist
+  if ix != -1
+    history[ix].freq = PENALIZE(history[ix].freq);
+  else
+    console.error("PREDICTED CHAR " + predictedChar + " DOESN'T EXIST IN HISTORY: " + x + ":" + y + " - " + history);
+
+  # Add correct char to predictions. it will implicitly sort history
+  addToPredictions(viewName, x, y, correctChar);
+
+
+correctPrediction = (viewName, x, y, predictedChar) ->
+  # No-op for now. I might reward correct predictions later.
+  console.log("CORRECT PREDICTION ", viewName, x, y, predictedChar)
+  return
+
+# Store information about the latest unvalidated prediction. It will be used later to validate predictions
+latestUnvalidatedPrediction = null;
+lastCharIsBackspace = false;
+
+validatePrediction = (currentChar, viewName, x, y) ->
+  if !latestUnvalidatedPrediction || currentChar == null
+    # no last known prediction (OR) no prediction for pos x,y at all
+    # Either way store the position to be validated by next char press
+    latestUnvalidatedPrediction = {char: currentChar, x: x, y: y, viewName: viewName}
+    return
+
+  # Here are the scenarios for correct/wrong predictions
+  # - latestUnvalidatedChar == null && currentChar != 'backspace'
+  #     addToPrediction() because last prediction resulted in no value. Assume next char to be the correct answer for last (x,y) pos
+  # - latestUnvalidatedChar != null && currentChar != 'backspace'
+  #     CorrectPrediction(): User has accepted the prev char and moved on to the next char. Accept my prediction
+  # - latestUnvalidatedChar != null && currentChar == 'backspace' && lastCharIsBackspace == false
+  #     Probably a wrong prediction: User deleted the prev char. It could be because the prediction was wrong or that they just didn't want the char
+  #        Mark the backspace and continue
+  # - currentChar == 'backspace' && lastCharIsBackspace == true
+  #     Two backspaces in a row. User is deleting chars because she doesn't want them.
+  #     Accept the lastUnvalidatedChar and reset it. Any alphanumeric char typed after backspace sequence will begin the prediction cycle afresh.
+
+  if currentChar == '\b'
+    if lastCharIsBackspace
+      # Two backspaces in a row
+      console.log("DOUBLE BACKSPACE");
+      correctPrediction(latestUnvalidatedPrediction.viewName, latestUnvalidatedPrediction.x, latestUnvalidatedPrediction.y, latestUnvalidatedPrediction.char)
+      latestUnvalidatedPrediction = null
+    lastCharIsBackspace = true
+  else
+    if latestUnvalidatedPrediction.char == null
+      addToPredictions(latestUnvalidatedPrediction.viewName, latestUnvalidatedPrediction.x, latestUnvalidatedPrediction.y, currentChar)
+    else if lastCharIsBackspace
+      # Sequence of char press: latestUnvalidatedChar, \b, non-backspace char. So latestUnvalidatedChar prediction is wrong
+      wrongPrediction(latestUnvalidatedPrediction.viewName, latestUnvalidatedPrediction.x, latestUnvalidatedPrediction.y, latestUnvalidatedPrediction.char, currentChar)
+    else
+      correctPrediction(latestUnvalidatedPrediction.viewName, latestUnvalidatedPrediction.x, latestUnvalidatedPrediction.y, latestUnvalidatedPrediction.char)
+    lastCharIsBackspace = false
+
+
+addButtonToPrediction = (viewName, buttonX, buttonY, buttonHeight, buttonWidth, char) ->
+  if viewName != 'view1'
+    return
+
+  buttonX = Math.round(buttonX)
+  buttonY = Math.round(buttonY)
+  console.log(buttonX, buttonY, char);
+  for x in [buttonX..(buttonX + buttonWidth)] by 1
+    for y in [buttonY..(buttonY + buttonHeight)] by 1
+      addToPredictions(viewName, x, y, char)
+
+
+canvasClickHandler = (event, layer) ->
+  DEFAULT_VIEW = 'view1'
+
+  x = event.pageX; y = event.pageY;
+  drawClickFeedback(x, y)
+
+  char = getPrediction(DEFAULT_VIEW, x, y)
+  console.log("PREDICTED CHAR ", x, y, char);
+  log("PREDICTED CHAR ", x, y, char);
+  validatePrediction(char, DEFAULT_VIEW, x, y)
+  addToCode(char)
+
+savePredictions = () ->
+  console.log("SAVING PREDICTIONS");
+  $.ajax
+    type: "POST"
+    url: "/predictions",
+    data: JSON.stringify(predictions),
+    processData: false,
+    contentType: 'application/json'
+
+renderKeyboard(keyboardLayer)
 renderCanvasLayer(keyboardLayer)
-addToCode("""def init self fun args
-name none app url
-namespaces none self kwargs
-if namespaces x for x in
-namespaces in x else self
-namespaces join if hasattr
-func name self path return
-resolvermatch func args
-repr getitem index""")
-moveCodeCharHighlight()
-modifyMetricForCanvas()
+log("READY!")
+
